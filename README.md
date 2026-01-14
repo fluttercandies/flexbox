@@ -1,5 +1,7 @@
 # Flexbox
 
+[中文文档](README_zh_CN.md) | English
+
 <div align="center">
   <img src="statics/logo.png" alt="Flexbox Logo" width="120" height="120">
 </div>
