@@ -215,6 +215,64 @@ SliverDynamicFlexbox(
 
 **Note**: For simple `Image` widgets, you don't need `DynamicFlexItem` - use them directly.
 
+### Scalable Flexbox with Pinch-to-Zoom
+
+**Google Photos style** pinch-to-zoom experience for your flexbox galleries:
+
+```dart
+class _ScalableGalleryState extends State<_ScalableGallery>
+    with SingleTickerProviderStateMixin {
+  late final controller = FlexboxScaleController(
+    initialExtent: 150.0,
+    minExtent: 80.0,
+    maxExtent: 300.0,
+    snapPoints: [80, 120, 160, 200, 250, 300],
+    gridModeThreshold: 250.0, // Switch to 1:1 grid when zoomed out
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    controller.attachTickerProvider(this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onScaleStart: controller.onScaleStart,
+      onScaleUpdate: controller.onScaleUpdate,
+      onScaleEnd: controller.onScaleEnd,
+      onDoubleTap: controller.onDoubleTap,
+      child: CustomScrollView(
+        slivers: [
+          SliverScalableFlexbox(
+            controller: controller,
+            mainAxisSpacing: 2.0,
+            crossAxisSpacing: 2.0,
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => Image.network(images[index].url, fit: BoxFit.cover),
+              childCount: images.length,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Key features:**
+- **Responsive scaling**: Follows pinch gestures in real-time
+- **Smooth snap animation**: Snaps to predefined points with spring physics
+- **Mode switching**: Automatically switches between 1:1 grid and aspect ratio modes
+- **Velocity-based momentum**: Continues motion based on gesture velocity
+
 ## API Reference
 
 ### Enums
@@ -227,6 +285,7 @@ SliverDynamicFlexbox(
 | `AlignItems` | `flexStart`, `flexEnd`, `center`, `baseline`, `stretch` | Alignment along the cross axis |
 | `AlignSelf` | `auto`, `flexStart`, `flexEnd`, `center`, `baseline`, `stretch` | Override parent's `AlignItems` |
 | `AlignContent` | `flexStart`, `flexEnd`, `center`, `spaceBetween`, `spaceAround`, `stretch` | Alignment of flex lines |
+| `FlexboxScaleMode` | `grid1x1`, `aspectRatio` | Display mode for scalable flexbox |
 
 ### FlexItem Properties
 
@@ -254,6 +313,7 @@ SliverDynamicFlexbox(
 | `DynamicFlexboxList` | Auto-sizing flexbox list (measures children) |
 | `SliverDynamicFlexbox` | Dynamic sliver for CustomScrollView |
 | `DynamicFlexItem` | Wrapper for children with unbounded constraint issues |
+| `SliverScalableFlexbox` | Scalable sliver with pinch-to-zoom support (Google Photos style) |
 
 ### Dimension Resolution Utilities
 
@@ -265,6 +325,13 @@ SliverDynamicFlexbox(
 | `ItemDimension` | Immutable class representing width/height with aspect ratio support |
 | `ImageProviderDimensionExtension` | Extension to get dimensions from ImageProvider |
 
+### Scale Controller
+
+| Class/Type | Description |
+|------------|-------------|
+| `FlexboxScaleController` | Controller for scalable flexbox with pinch-to-zoom (Google Photos style) |
+| `FlexboxScaleMode` | Display mode enum (`grid1x1`, `aspectRatio`) |
+
 ### Available Delegates
 
 | Delegate | Description |
@@ -275,6 +342,7 @@ SliverDynamicFlexbox(
 | `SliverFlexboxDelegateWithDynamicAspectRatios` | Dynamic aspect ratios via callback |
 | `SliverFlexboxDelegateWithFlexValues` | Custom flex grow values per item |
 | `SliverFlexboxDelegateWithBuilder` | Fully customizable via builder callback |
+| `SliverFlexboxDelegateWithDirectExtent` | Direct extent control with smooth transitions (for pinch-to-zoom) |
 
 ### SliverDynamicFlexboxDelegate Options
 

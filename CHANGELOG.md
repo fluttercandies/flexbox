@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-15
+
+### Added
+- `FlexboxScaleController` - Controller for scalable flexbox with pinch-to-zoom support
+  - Responsive scaling that follows pinch gestures in real-time
+  - Smooth snap animation with spring physics
+  - Mode switching between 1:1 grid and aspect ratio modes
+  - Velocity-based momentum for natural gesture continuation
+  - Configurable snap points, min/max extent, and grid mode threshold
+- `FlexboxScaleMode` enum - Display mode for scalable flexbox (`grid1x1`, `aspectRatio`)
+- `SliverFlexboxDelegateWithDirectExtent` - Delegate with direct extent control
+  - Supports smooth continuous scaling without discrete column jumps
+  - Fill factor interpolation for smooth layout transitions
+  - Ideal for Google Photos-like pinch-to-zoom experience
+- `SliverScalableFlexbox` - Scalable sliver widget with pinch-to-zoom support
+  - Automatically rebuilds when controller's extent changes
+  - Integrates with CustomScrollView for seamless scrolling
+
+### Features
+- Pinch-to-zoom gesture support for flexbox layouts
+- Spring physics animations for smooth snap transitions
+- Fill factor animation for smooth layout state transitions
+- Automatic display mode switching based on zoom level
+- Double-tap to zoom between predefined levels
+- Programmatic zoom control with `zoomIn()` and `zoomOut()` methods
+- Velocity-based gesture momentum for natural feel
+
+### Example
+- Added `ScalableFlexboxPage` demonstrating pinch-to-zoom gallery
+- Network image gallery example with multiple image sources (Nekosia, Yande, Zerochan)
+
 ## [1.0.0] - 2026-01-14
 
 ### Added

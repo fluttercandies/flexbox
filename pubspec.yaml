@@ -3,7 +3,7 @@ description: >-
   A Flutter library for CSS Flexbox layout. Provides widgets for creating layouts
   using the CSS Flexbox layout model, bringing the power and flexibility of
   flexbox to Flutter.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/fluttercandies/flexbox_layout
 repository: https://github.com/fluttercandies/flexbox_layout
 issue_tracker: https://github.com/fluttercandies/flexbox_layout/issues

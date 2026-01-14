@@ -215,6 +215,64 @@ SliverDynamicFlexbox(
 
 **注意**：对于简单的 `Image` 组件，您不需要 `DynamicFlexItem` - 直接使用即可。
 
+### 可缩放 Flexbox 支持捏合缩放
+
+**Google Photos 风格**的捏合缩放体验：
+
+```dart
+class _ScalableGalleryState extends State<_ScalableGallery>
+    with SingleTickerProviderStateMixin {
+  late final controller = FlexboxScaleController(
+    initialExtent: 150.0,
+    minExtent: 80.0,
+    maxExtent: 300.0,
+    snapPoints: [80, 120, 160, 200, 250, 300],
+    gridModeThreshold: 250.0, // 缩小时切换到 1:1 网格模式
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    controller.attachTickerProvider(this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onScaleStart: controller.onScaleStart,
+      onScaleUpdate: controller.onScaleUpdate,
+      onScaleEnd: controller.onScaleEnd,
+      onDoubleTap: controller.onDoubleTap,
+      child: CustomScrollView(
+        slivers: [
+          SliverScalableFlexbox(
+            controller: controller,
+            mainAxisSpacing: 2.0,
+            crossAxisSpacing: 2.0,
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => Image.network(images[index].url, fit: BoxFit.cover),
+              childCount: images.length,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**主要特性：**
+- **响应式缩放**：实时跟随捏合手势
+- **平滑吸附动画**：使用弹簧物理效果吸附到预定义点
+- **模式切换**：自动在 1:1 网格和纵横比模式之间切换
+- **基于速度的动量**：根据手势速度继续运动
+
 ## API 参考
 
 ### 枚举
@@ -227,6 +285,7 @@ SliverDynamicFlexbox(
 | `AlignItems` | `flexStart`, `flexEnd`, `center`, `baseline`, `stretch` | 沿交叉轴的对齐方式 |
 | `AlignSelf` | `auto`, `flexStart`, `flexEnd`, `center`, `baseline`, `stretch` | 覆盖父级的 `AlignItems` |
 | `AlignContent` | `flexStart`, `flexEnd`, `center`, `spaceBetween`, `spaceAround`, `stretch` | flex 行的对齐方式 |
+| `FlexboxScaleMode` | `grid1x1`, `aspectRatio` | 可缩放 flexbox 的显示模式 |
 
 ### FlexItem 属性
 
@@ -254,6 +313,7 @@ SliverDynamicFlexbox(
 | `DynamicFlexboxList` | 自动调整大小的 flexbox 列表（测量子组件） |
 | `SliverDynamicFlexbox` | 用于 CustomScrollView 的动态 sliver |
 | `DynamicFlexItem` | 具有无边界约束问题的子组件包装器 |
+| `SliverScalableFlexbox` | 支持捏合缩放的可缩放 sliver（Google Photos 风格） |
 
 ### 尺寸解析工具
 
@@ -265,6 +325,13 @@ SliverDynamicFlexbox(
 | `ItemDimension` | 表示宽度/高度且支持纵横比的不可变类 |
 | `ImageProviderDimensionExtension` | 从 ImageProvider 获取尺寸的扩展 |
 
+### 缩放控制器
+
+| 类/类型 | 描述 |
+|------------|-------------|
+| `FlexboxScaleController` | 可缩放 flexbox 的控制器，支持捏合缩放（Google Photos 风格） |
+| `FlexboxScaleMode` | 显示模式枚举（`grid1x1`、`aspectRatio`） |
+
 ### 可用委托
 
 | 委托 | 描述 |
@@ -275,6 +342,7 @@ SliverDynamicFlexbox(
 | `SliverFlexboxDelegateWithDynamicAspectRatios` | 通过回调获取动态纵横比 |
 | `SliverFlexboxDelegateWithFlexValues` | 每个项目的自定义 flex grow 值 |
 | `SliverFlexboxDelegateWithBuilder` | 通过构建器回调完全可定制 |
+| `SliverFlexboxDelegateWithDirectExtent` | 直接扩展控制，支持平滑过渡（用于捏合缩放） |
 
 ### SliverDynamicFlexboxDelegate 选项
 
