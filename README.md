@@ -4,16 +4,15 @@
 
 <div align="center">
   <img src="statics/logo.png" alt="Flexbox Logo" width="120" height="120">
+
+  A Flutter library for CSS Flexbox layout. This package provides widgets for creating layouts using the CSS Flexbox layout model, bringing the power and flexibility of flexbox to Flutter.
+
+  [![Pub Version](https://img.shields.io/pub/v/flexbox_layout)](https://pub.dev/packages/flexbox_layout)
+  [![Publisher](https://img.shields.io/pub/publisher/flexbox_layout)](https://pub.dev/packages/flexbox_layout)
+  [![Likes](https://img.shields.io/pub/likes/flexbox_layout)](https://pub.dev/packages/flexbox_layout/score)
+  [![Pub Dev](https://img.shields.io/badge/dart-docs-blue.svg)](https://pub.dev/documentation/flexbox_layout/latest/)
+  [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue)](https://fluttercandies.github.io/flexbox_layout/)
 </div>
-
-A Flutter library for CSS Flexbox layout. This package provides widgets for creating layouts using the CSS Flexbox layout model, bringing the power and flexibility of flexbox to Flutter.
-
-[![Pub Version](https://img.shields.io/pub/v/flexbox_layout)](https://pub.dev/packages/flexbox_layout)
-[![Publisher](https://img.shields.io/pub/publisher/flexbox_layout)](https://pub.dev/packages/flexbox_layout)
-[![Likes](https://img.shields.io/pub/likes/flexbox_layout)](https://pub.dev/packages/flexbox_layout/score)
-[![Popularity](https://img.shields.io/pub/popularity/flexbox_layout)](https://pub.dev/packages/flexbox_layout/score)
-[![Pub Dev](https://img.shields.io/badge/dart-docs-blue.svg)](https://pub.dev/documentation/flexbox_layout/latest/)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue)](https://fluttercandies.github.io/flexbox_layout/)
 
 ## Live Demo
 
