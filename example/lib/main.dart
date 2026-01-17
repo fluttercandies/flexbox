@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'config/image_config.dart';
+import 'models/image_post.dart';
 import 'pages/basic_flexbox_page.dart';
 import 'pages/cat_gallery_page.dart';
 import 'pages/delegates_showcase_page.dart';
@@ -38,6 +40,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  SourceType _selectedSource = ImageConfig.currentSource;
+
   static const List<_ExampleItem> _examples = [
     _ExampleItem(
       title: 'Basic Flexbox',
@@ -117,24 +121,38 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: NeoBrutalism.shapeDecoration(
-                      color: NeoBrutalism.black,
-                      hasShadow: false,
-                    ),
-                    child: const Text(
-                      'FLUTTER PACKAGE',
-                      style: TextStyle(
-                        color: NeoBrutalism.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1,
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: NeoBrutalism.shapeDecoration(
+                          color: NeoBrutalism.black,
+                          hasShadow: false,
+                        ),
+                        child: const Text(
+                          'FLUTTER PACKAGE',
+                          style: TextStyle(
+                            color: NeoBrutalism.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
                       ),
-                    ),
+                      const Spacer(),
+                      _ConfigButton(
+                        currentSource: _selectedSource,
+                        onSourceChanged: (source) {
+                          setState(() {
+                            _selectedSource = source;
+                            ImageConfig.currentSource = source;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -307,6 +325,293 @@ class _ExampleCardState extends State<_ExampleCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ConfigButton extends StatefulWidget {
+  const _ConfigButton({
+    required this.currentSource,
+    required this.onSourceChanged,
+  });
+
+  final SourceType currentSource;
+  final ValueChanged<SourceType> onSourceChanged;
+
+  @override
+  State<_ConfigButton> createState() => _ConfigButtonState();
+}
+
+class _ConfigButtonState extends State<_ConfigButton> {
+  bool _isPressed = false;
+
+  void _showSourceSelector() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _SourceSelectorSheet(
+        currentSource: widget.currentSource,
+        onSourceChanged: (source) {
+          widget.onSourceChanged(source);
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final sourceColor = _getSourceColor(widget.currentSource);
+
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: _showSourceSelector,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        transform: Matrix4.translationValues(
+          _isPressed ? NeoBrutalism.shadowOffset.dx : 0,
+          _isPressed ? NeoBrutalism.shadowOffset.dy : 0,
+          0,
+        ),
+        decoration: NeoBrutalism.shapeDecoration(
+          color: sourceColor,
+          radius: 12,
+          hasShadow: !_isPressed,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _getSourceDisplayName(widget.currentSource),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(Icons.settings_rounded, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getSourceColor(SourceType source) {
+    switch (source) {
+      case SourceType.yande:
+        return NeoBrutalism.pink;
+      case SourceType.zerochan:
+        return NeoBrutalism.blue;
+      case SourceType.nekosia:
+        return NeoBrutalism.purple;
+      case SourceType.konachan:
+        return NeoBrutalism.yellow;
+    }
+  }
+
+  String _getSourceDisplayName(SourceType source) {
+    switch (source) {
+      case SourceType.yande:
+        return 'yande';
+      case SourceType.zerochan:
+        return 'zerochan';
+      case SourceType.nekosia:
+        return 'nekosia';
+      case SourceType.konachan:
+        return 'konachan';
+    }
+  }
+}
+
+class _SourceSelectorSheet extends StatelessWidget {
+  const _SourceSelectorSheet({
+    required this.currentSource,
+    required this.onSourceChanged,
+  });
+
+  final SourceType currentSource;
+  final ValueChanged<SourceType> onSourceChanged;
+
+  static const List<_SourceOption> _sourceOptions = [
+    _SourceOption(
+      source: SourceType.yande,
+      name: 'yande',
+      color: NeoBrutalism.pink,
+      icon: Icons.image_rounded,
+    ),
+    _SourceOption(
+      source: SourceType.zerochan,
+      name: 'zerochan',
+      color: NeoBrutalism.blue,
+      icon: Icons.collections_rounded,
+    ),
+    _SourceOption(
+      source: SourceType.nekosia,
+      name: 'nekosia',
+      color: NeoBrutalism.purple,
+      icon: Icons.photo_library_rounded,
+    ),
+    _SourceOption(
+      source: SourceType.konachan,
+      name: 'konachan',
+      color: NeoBrutalism.yellow,
+      icon: Icons.photo_rounded,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      decoration: const BoxDecoration(
+        color: NeoBrutalism.cream,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        border: Border(
+          top: BorderSide(
+            color: NeoBrutalism.black,
+            width: NeoBrutalism.borderWidth,
+          ),
+        ),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: NeoBrutalism.circleDecoration(
+                    color: NeoBrutalism.orange,
+                  ),
+                  child: const Icon(Icons.settings_rounded, size: 24),
+                ),
+                const SizedBox(width: 16),
+                const Text(
+                  'Image Source',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            ..._sourceOptions.map(
+              (option) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _SourceOptionCard(
+                  option: option,
+                  isSelected: option.source == currentSource,
+                  onTap: () => onSourceChanged(option.source),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SourceOption {
+  const _SourceOption({
+    required this.source,
+    required this.name,
+    required this.color,
+    required this.icon,
+  });
+
+  final SourceType source;
+  final String name;
+  final Color color;
+  final IconData icon;
+}
+
+class _SourceOptionCard extends StatefulWidget {
+  const _SourceOptionCard({
+    required this.option,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final _SourceOption option;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  State<_SourceOptionCard> createState() => _SourceOptionCardState();
+}
+
+class _SourceOptionCardState extends State<_SourceOptionCard> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        transform: Matrix4.translationValues(
+          _isPressed ? NeoBrutalism.shadowOffset.dx : 0,
+          _isPressed ? NeoBrutalism.shadowOffset.dy : 0,
+          0,
+        ),
+        decoration: NeoBrutalism.shapeDecoration(
+          color: widget.option.color,
+          hasShadow: !_isPressed,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: NeoBrutalism.shapeDecoration(
+                  color: NeoBrutalism.white,
+                  radius: 12,
+                  hasShadow: false,
+                ),
+                child: Icon(widget.option.icon, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  widget.option.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              if (widget.isSelected)
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: NeoBrutalism.circleDecoration(
+                    color: NeoBrutalism.green,
+                  ),
+                  child: const Icon(Icons.check_rounded, size: 18),
+                ),
             ],
           ),
         ),
