@@ -1,4 +1,4 @@
-enum SourceType { yande, zerochan, nekosia }
+enum SourceType { yande, zerochan, nekosia, konachan }
 
 class ImagePost {
   final int id;
