@@ -10,6 +10,7 @@ import '../shared/safe_state_mixin.dart';
 import '../theme/neo_brutalism.dart';
 import '../widgets/neo_easy_refresh.dart';
 import '../widgets/neo_widgets.dart';
+import '../widgets/scale_scroll_coordinator.dart';
 
 /// A page demonstrating the scalable flexbox with pinch-to-zoom functionality.
 ///
@@ -446,37 +447,43 @@ class _ScalableFlexboxPageState extends State<ScalableFlexboxPage>
       crossAxisSpacing: 2,
     );
 
-    return GestureDetector(
+    return ScaleScrollCoordinator(
       onScaleStart: _scaleController.onScaleStart,
       onScaleUpdate: _scaleController.onScaleUpdate,
       onScaleEnd: _scaleController.onScaleEnd,
       onDoubleTap: _scaleController.onDoubleTap,
-      child: EasyRefresh(
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoad: _onLoad,
-        header: const NeoBrutalismHeader(),
-        footer: const NeoBrutalismFooter(),
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.all(2),
-              sliver: SliverFlexbox(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => _ScalableImageItem(
-                    post: _posts[index],
-                    index: index,
-                    isGridMode: isGridMode,
+      debugOwner: this,
+      builder: (context, state) {
+        return EasyRefresh(
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoad: _onLoad,
+          header: const NeoBrutalismHeader(),
+          footer: const NeoBrutalismFooter(),
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: state.isScaling
+                ? const NeverScrollableScrollPhysics()
+                : null,
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(2),
+                sliver: SliverFlexbox(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _ScalableImageItem(
+                      post: _posts[index],
+                      index: index,
+                      isGridMode: isGridMode,
+                    ),
+                    childCount: _posts.length,
                   ),
-                  childCount: _posts.length,
+                  flexboxDelegate: flexboxDelegate,
                 ),
-                flexboxDelegate: flexboxDelegate,
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -496,70 +503,78 @@ class _ScalableFlexboxPageState extends State<ScalableFlexboxPage>
       crossAxisSpacing: 2,
     );
 
-    return GestureDetector(
+    return ScaleScrollCoordinator(
       onScaleStart: _scaleController.onScaleStart,
       onScaleUpdate: _scaleController.onScaleUpdate,
       onScaleEnd: _scaleController.onScaleEnd,
       onDoubleTap: _scaleController.onDoubleTap,
-      child: EasyRefresh(
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoad: _onLoad,
-        header: const NeoBrutalismHeader(),
-        footer: const NeoBrutalismFooter(),
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverToBoxAdapter(
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: const EdgeInsets.all(8),
-                padding: const EdgeInsets.all(12),
-                decoration: NeoBrutalism.shapeDecoration(
-                  color: isGridMode ? NeoBrutalism.orange : NeoBrutalism.yellow,
-                  hasShadow: false,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      isGridMode
-                          ? Icons.grid_on_rounded
-                          : Icons.info_outline_rounded,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
+      debugOwner: this,
+      builder: (context, state) {
+        return EasyRefresh(
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoad: _onLoad,
+          header: const NeoBrutalismHeader(),
+          footer: const NeoBrutalismFooter(),
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: state.isScaling
+                ? const NeverScrollableScrollPhysics()
+                : null,
+            slivers: [
+              SliverToBoxAdapter(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: NeoBrutalism.shapeDecoration(
+                    color: isGridMode
+                        ? NeoBrutalism.orange
+                        : NeoBrutalism.yellow,
+                    hasShadow: false,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
                         isGridMode
-                            ? '1:1 Grid Mode - All images shown as squares'
-                            : 'Aspect Ratio Mode - Images preserve original proportions',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                            ? Icons.grid_on_rounded
+                            : Icons.info_outline_rounded,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          isGridMode
+                              ? '1:1 Grid Mode - All images shown as squares'
+                              : 'Aspect Ratio Mode - Images preserve original proportions',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(2),
-              sliver: SliverFlexbox(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => _ScalableImageItem(
-                    post: _posts[index],
-                    index: index,
-                    isGridMode: isGridMode,
+                    ],
                   ),
-                  childCount: _posts.length,
                 ),
-                flexboxDelegate: flexboxDelegate,
               ),
-            ),
-          ],
-        ),
-      ),
+              SliverPadding(
+                padding: const EdgeInsets.all(2),
+                sliver: SliverFlexbox(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _ScalableImageItem(
+                      post: _posts[index],
+                      index: index,
+                      isGridMode: isGridMode,
+                    ),
+                    childCount: _posts.length,
+                  ),
+                  flexboxDelegate: flexboxDelegate,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
