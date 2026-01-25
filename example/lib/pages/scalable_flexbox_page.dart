@@ -400,23 +400,31 @@ class _ScalableFlexboxPageState extends State<ScalableFlexboxPage>
                         ),
                       ),
                       // Mode switch threshold marker
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final thresholdFraction =
-                              (_gridModeThreshold -
-                                  _scaleController.minExtent) /
-                              (_scaleController.maxExtent -
-                                  _scaleController.minExtent);
-                          return Positioned(
-                            left: constraints.maxWidth * thresholdFraction - 1,
-                            top: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 2,
-                              color: NeoBrutalism.orange,
-                            ),
-                          );
-                        },
+                      Positioned.fill(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final thresholdFraction =
+                                (_gridModeThreshold -
+                                    _scaleController.minExtent) /
+                                (_scaleController.maxExtent -
+                                    _scaleController.minExtent);
+                            return Stack(
+                              children: [
+                                Positioned(
+                                  left:
+                                      constraints.maxWidth * thresholdFraction -
+                                      1,
+                                  top: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    width: 2,
+                                    color: NeoBrutalism.orange,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
